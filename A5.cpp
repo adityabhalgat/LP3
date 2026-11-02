@@ -1,95 +1,95 @@
 #include <iostream>
 #include <vector>
+#include <cstdlib>
+#include <ctime>
 using namespace std;
 
-int partition(vector<int>& a, int low, int high) {
-    int pivot = a[high];
-    int i = low - 1;
+// Partition function
+int helper(vector<int>& arr, int low, int high) {
 
-    for (int j = low; j < high; j++) {
-        if (a[j] < pivot) {
+    int pivot = arr[low];
+    int i = low + 1;
+    int j = high;
+
+    while (i <= j) {
+
+        while (i <= high && arr[i] <= pivot)
             i++;
-            swap(a[i], a[j]);
-        }
+
+        while (j > low && arr[j] > pivot)
+            j--;
+
+        if (i < j)
+            swap(arr[i], arr[j]);
     }
 
-    swap(a[i+1], a[high]);
-    return i+1;
+    swap(arr[low], arr[j]);
+
+    return j;
 }
 
-void quickSort(vector<int>& a, int low, int high) {
-    if (low < high) {
-        int p = partition(a, low, high);
+// Deterministic Quick Sort
+void deterministic(vector<int>& arr, int low, int high) {
 
-        quickSort(a, low, p-1);
-        quickSort(a, p+1, high);
+    if (low < high) {
+
+        int p = helper(arr, low, high);
+
+        deterministic(arr, low, p - 1);
+        deterministic(arr, p + 1, high);
+    }
+}
+
+// Randomized Quick Sort
+void randomized(vector<int>& arr, int low, int high) {
+
+    if (low < high) {
+
+        int randomIndex = low + rand() % (high - low + 1);
+
+        swap(arr[low], arr[randomIndex]);
+
+        int p = helper(arr, low, high);
+
+        randomized(arr, low, p - 1);
+        randomized(arr, p + 1, high);
     }
 }
 
 int main() {
-    int n;
+
+    srand(time(0));
+
+    int n, choice;
+    cout << "Enter number of elements: ";
     cin >> n;
 
-    vector<int> a(n);
+    vector<int> arr(n);
+
+    cout << "Enter elements: ";
     for (int i = 0; i < n; i++)
-        cin >> a[i];
+        cin >> arr[i];
 
-    quickSort(a, 0, n-1);
+    cout << "\n1. Deterministic Quick Sort";
+    cout << "\n2. Randomized Quick Sort";
+    cout << "\nEnter choice: ";
+    cin >> choice;
 
-    for (int x : a)
+    if (choice == 1)
+        deterministic(arr, 0, n - 1);
+
+    else if (choice == 2)
+        randomized(arr, 0, n - 1);
+
+    else {
+        cout << "Invalid choice";
+        return 0;
+    }
+
+    cout << "\nSorted array: ";
+
+    for (int x : arr)
         cout << x << " ";
 
     return 0;
 }
-
-
-// #include <iostream>
-// #include <vector>
-// #include <cstdlib>
-// #include <ctime>
-// using namespace std;
-
-// int partition(vector<int>& a, int low, int high) {
-//     int pivot = a[high];
-//     int i = low - 1;
-
-//     for (int j = low; j < high; j++) {
-//         if (a[j] < pivot) {
-//             i++;
-//             swap(a[i], a[j]);
-//         }
-//     }
-
-//     swap(a[i+1], a[high]);
-//     return i+1;
-// }
-
-// void quickSort(vector<int>& a, int low, int high) {
-//     if (low < high) {
-//         int r = low + rand() % (high-low+1);
-//         swap(a[r], a[high]);
-
-//         int p = partition(a, low, high);
-
-//         quickSort(a, low, p-1);
-//         quickSort(a, p+1, high);
-//     }
-// }
-
-// int main() {
-//     srand(time(0));
-
-//     int n;
-//     cin >> n;
-
-//     vector<int> a(n);
-//     for (int i = 0; i < n; i++)
-//         cin >> a[i];
-
-//     quickSort(a, 0, n-1);
-
-//     for (int x : a)
-//         cout << x << " ";
-
-//     return 0;
-// }
